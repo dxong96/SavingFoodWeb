@@ -1,16 +1,68 @@
+
 from app import app, db
 from flask import render_template
 from flask import jsonify
 from flask import request
-from models import HawkerCentre, Food, Vendor, Cost, Discount
+from app.models import HawkerCentre, Food, Vendor, Cost, Discount
 from datetime import date
-from latlong import distance
+from app.latlong import distance
 
-@app.route("/")
-@app.route("/index")
+from app import app
+from flask import Flask, render_template, flash, request, redirect, url_for
+from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField, SelectField
+
+
+
+
+app.config['SECRET_KEY'] = '7d441f27d441f27567d441f2b6176a'
+
+
+
+class ReusableForm(Form):
+    hawker_name = TextField('Name:', validators=[validators.required()])
+    unit_no = TextField('Unit No', validators=[validators.required(), validators.Length(max=20)])
+    hawker_centre = SelectField('Hawker Centres', choices=[(1, 'Ayer Rajah Hawker Centre'), (2,'Holland Village Hawker Centre')])
+    food = TextField("Food Name", validators=[validators.required()])
+    food_cost = TextField("Food Price", validators=[validators.required()])
+
+
+
+
+
+
+@app.route("/", methods = ['GET', 'POST'])
 def index():
-    user = {"username": "dx"}
-    return render_template("index.html", title="hello!", user= user)
+
+    form = ReusableForm(request.form)
+
+    print (form.errors)
+
+    if request.method == 'POST':
+        form = request.form
+        hawker_name=form['hawker_name']
+        unit_no=form['unit_no']
+        hawker_centre=form['hawker_centre']
+
+        vendor = Vendor(name = hawker_name, unit_no = unit_no, hawker_id = hawker_centre)
+        db.session.add(vendor)
+        db.session.commit()
+
+        return redirect(url_for('addFood'))
+
+        # return render_template("addFood.html")
+    return render_template("index.html", title="hello!", form = form)
+
+
+@app.route("/addFood")
+def addFood():
+
+    form = ReusableForm(request.form)
+
+
+
+    return render_template("food.html", form = form)
+
+
 
 @app.route("/foods.json")
 def foods():
@@ -27,7 +79,7 @@ def nearby():
         lat = float(lat)
         lon = float(lon)
         new_centres = []
-        for centre in centres: 
+        for centre in centres:
             if distance(lat, lon, centre.latitude, centre.longitude) < 0.5:
                 new_centres.append(centre)
 
