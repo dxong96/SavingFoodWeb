@@ -12,8 +12,6 @@ from flask import Flask, render_template, flash, request, redirect, url_for
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField, SelectField
 
 
-
-
 app.config['SECRET_KEY'] = '7d441f27d441f27567d441f2b6176a'
 
 
@@ -24,10 +22,6 @@ class ReusableForm(Form):
     hawker_centre = SelectField('Hawker Centres', choices=[(1, 'Ayer Rajah Hawker Centre'), (2,'Holland Village Hawker Centre')])
     food = TextField("Food Name", validators=[validators.required()])
     food_cost = TextField("Food Price", validators=[validators.required()])
-
-
-
-
 
 
 @app.route("/", methods = ['GET', 'POST'])
@@ -55,19 +49,17 @@ def index():
 
 @app.route("/addFood")
 def addFood():
-
     form = ReusableForm(request.form)
-
-
-
     return render_template("food.html", form = form)
+
 
 
 
 @app.route("/foods.json")
 def foods():
-	foods = Food.query.all()
-	return jsonify(map(Food.as_dict, foods))
+    foods = Food.query.all()
+    return jsonify(list(map(Food.as_dict, foods)))
+
 
 @app.route("/nearby.json")
 def nearby():
@@ -84,20 +76,22 @@ def nearby():
                 new_centres.append(centre)
 
         centres = new_centres
-    return jsonify(map(HawkerCentre.as_dict, centres))
+    return jsonify(list(map(HawkerCentre.as_dict, centres)))
 
-@app.route("/food/<int:food_id>/vendors.json")
+@app.route("/foods/<int:food_id>/vendors.json")
 def food_vendors(food_id):
     costs = Cost.query.filter_by(food_id=food_id).all()
     vendor_ids = map(lambda c: c.vendor_id, costs)
     vendors = db.session.query(Vendor).filter(Vendor.id.in_(vendor_ids)).all()
 
-    return jsonify(map(Vendor.as_dict, vendors))
+    return jsonify(list(map(Vendor.as_dict, vendors)))
+
 
 @app.route("/centres/<int:centre_id>/vendors.json")
 def centre_vendors(centre_id):
     vendors = Vendor.query.filter_by(hawker_id=centre_id).all()
-    return jsonify(map(Vendor.as_dict, vendors))
+    return jsonify(list(map(Vendor.as_dict, vendors)))
+
 
 @app.route("/vendors/<int:vendor_id>.json")
 def vendor(vendor_id):
@@ -111,7 +105,7 @@ def vendor(vendor_id):
             cost_ids.append(cost.id)
             food_id_cost[cost.food_id] = cost
 
-        food_ids = map(lambda c: c.food_id, costs)
+        food_ids = list(map(lambda c: c.food_id, costs))
         foods = db.session.query(Food).filter(Food.id.in_(food_ids)).all()
 
 
