@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 from app import app, db
 from app.models import HawkerCentre, Food, Vendor, Cost, Discount
 
@@ -11,3 +12,8 @@ def make_shell_context():
     	'Cost': Cost, 
     	'Discount': Discount
     }
+=======
+from app import app
+
+ 
+>>>>>>> Stashed changes

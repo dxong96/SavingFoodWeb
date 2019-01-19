@@ -1,5 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Hello, {{ user.username }}!</h1>
+<div class="container contact-form">
+  <div class="contact-image">
+        <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
+  </div>
+
+  <form action="" method="post" role="form">
+    {{ form.csrf }}
+      <h3>Drop Us a Message</h3>
+         <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                    <label for="hawker_name">Name:</label>
+                      {{form.hawker_name}}
+                    <label for="unit_no">Unit No:</label>
+                      {{form.unit_no}}
+                    <label for="select_no">Hawker Centre</label>
+                      {{form.hawker_centre}}
+
+                </div>
+            <button type="submit" class="btn btn-success">Sign Up</button>
+
+            </div>
+          </div>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+    {% for message in messages %}
+    {% if "Error" not in message[1]: %}
+    <div class="alert alert-info">
+                    <strong>Success! </strong> {{ message[1] }}</div>
+    {% endif %}
+
+    {% if "Error" in message[1]: %}
+    <div class="alert alert-warning">
+                    {{ message[1] }}</div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+</div>
+
+
 {% endblock %}
