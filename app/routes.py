@@ -6,8 +6,6 @@ from flask import request
 from app.models import HawkerCentre, Food, Vendor, Cost, Discount
 from datetime import date
 from app.latlong import distance
-
-from app import app
 from flask import Flask, render_template, flash, request, redirect, url_for
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField, SelectField
 
