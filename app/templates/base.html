@@ -21,41 +21,31 @@
     <script type=text/javascript src="{{url_for('static', filename='js/main.js') }}"></script>
     <script>
     $(document).ready(function(){
-        console.log("Test");
-        var next = 1;
         $(".add-more").click(function(e){
-          console.log("Test");
-
             e.preventDefault();
-            var addto = "#field";
-            var addRemove = "#field" + (next);
-            next = next + 1;
-            console.log("Test");
-            var newIn = '<input autocomplete="off" class="input" id="food' + next + '" name="field' + next + '" type="text">';
-            var newIn2 = '<input autocomplete="off" class="input" id="cost' + next + '" name="field' + next + '" type="text">';
+            var addto = $("#field");
+            var newIn = $(addto).find("select")[0].outerHTML;
+            var newIn2 = '<input autocomplete="off" class="input" name="cost[]" type="number" min="0" value="0" step="0.01">';
 
             //var newInput = $(newIn);
             // var newInput2 = $(newIn2);
-            var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" >-</button></div><div id="food">';
+            var removeBtn = '<button class="btn btn-danger" >-</button>';
             var removeButton = $(removeBtn);
-            $(addto).append('<br>');
-            $(addto).append(newIn);
+            var parent = $('<div></div>');
+            parent.append(newIn);
       
-            $(addto).append(newIn2);
-            $(addto).append(this);
+            parent.append(newIn2);
+            parent.append(removeButton);
+            addto.append(parent);
+            addto.append(this);
 
-            // $(addto).after(newInput2);
-            $(addRemove).after(removeButton);
-            $("#field" + next).attr('data-source',$(addto).attr('data-source'));
-            $("#count").val(next);
+            // addto.after(newInput2);
 
-                $('.remove-me').click(function(e){
-                    e.preventDefault();
-                    var fieldNum = this.id.charAt(this.id.length-1);
-                    var fieldID = "#field" + fieldNum;
-                    $(this).remove();
-                    $(fieldID).remove();
-                });
+            removeButton.click(function(e){
+                e.preventDefault();
+
+                $(this).parent().remove();
+            });
         });
     });
     </script>

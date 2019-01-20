@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Vendors</h2>
+<table class="table">
+	<tbody>
+		{% for v in vendors %}
+		<tr>
+			<td>{{v.name}}</td>
+			<td><a href="/addFood/{{v.id}}">Add food(s)</a></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

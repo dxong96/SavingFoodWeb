@@ -46,14 +46,26 @@ def index():
         # return render_template("addFood.html")
     return render_template("index.html", title="hello!", form = form)
 
+@app.route("/vendors")
+def list_vendors():
+    return render_template("vendors.html", vendors = Vendor.query.all())
 
-@app.route("/addFood")
-def addFood():
-    form = ReusableForm(request.form)
-    return render_template("food.html", form = form)
+@app.route("/addFood/<int:vendor_id>")
+def addFood(vendor_id):
+    return render_template("food.html", foods = Food.query.all(), vendor_id=vendor_id)
 
+@app.route("/addFoods", methods = ['POST'])
+def addFoods():
+    food_ids = request.form.getlist('food_id[]')
+    costs = request.form.getlist('cost[]')
+    vendor_id = request.form.get('vendor_id')
 
-
+    length = len(food_ids)
+    for i in range(length):
+        c = Cost(food_id=food_ids[i], vendor_id=vendor_id, amount=float(costs[i]))
+        db.session.add(c)
+    db.session.commit()
+    return redirect('/vendors')
 
 @app.route("/foods.json")
 def foods():
