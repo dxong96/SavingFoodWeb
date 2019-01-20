@@ -17,7 +17,7 @@ app.config['SECRET_KEY'] = '7d441f27d441f27567d441f2b6176a'
 class ReusableForm(Form):
     hawker_name = TextField('Name:', validators=[validators.required()])
     unit_no = TextField('Unit No', validators=[validators.required(), validators.Length(max=20)])
-    hawker_centre = SelectField('Hawker Centres', choices=[(1, 'Ayer Rajah Hawker Centre'), (2,'Holland Village Hawker Centre')])
+    hawker_centre = SelectField('Hawker Centres', choices=[(hc.id, hc.name) for hc in HawkerCentre.query.all()])
     food = TextField("Food Name", validators=[validators.required()])
     food_cost = TextField("Food Price", validators=[validators.required()])
 
