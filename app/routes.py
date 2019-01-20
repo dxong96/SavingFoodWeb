@@ -4,7 +4,7 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 from app.models import HawkerCentre, Food, Vendor, Cost, Discount
-from datetime import date
+from datetime import date, datetime
 from app.latlong import distance
 from flask import Flask, render_template, flash, request, redirect, url_for
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField, SelectField
@@ -48,6 +48,39 @@ def index():
 def list_vendors():
     return render_template("vendors.html", vendors = Vendor.query.all())
 
+@app.route("/vendors/<int:vendor_id>/discounts")
+def vendor_discounts(vendor_id):
+    costs = Cost.query.filter_by(vendor_id=vendor_id).all()
+    cost_ids = []
+    food_id_cost = {}
+    for cost in costs:
+        cost_ids.append(cost.id)
+        food_id_cost[cost.food_id] = cost
+
+    food_ids = list(map(lambda c: c.food_id, costs))
+    foods = db.session.query(Food).filter(Food.id.in_(food_ids)).all()
+    discounts = db.session.query(Discount).filter(Discount.cost_id.in_(cost_ids)).all()
+
+    discount_dict = {}
+    for d in discounts:
+        if d.start_time.date() == date.today():
+            discount_dict[d.cost_id] = d
+
+    return render_template("vendor_discounts.html", food_id_cost=food_id_cost, discount_dict=discount_dict, foods=foods, vendor_id=vendor_id)
+
+@app.route("/discounts", methods = ['POST'])
+def add_discount():
+    vendor_id = request.form.get('vendor_id')
+    qty = request.form.get('qty')
+    amount = request.form.get('amount')
+    food_id = request.form.get('food_id')
+    c = Cost.query.filter_by(food_id=food_id, vendor_id=vendor_id).first()
+    d = Discount(qty=qty, amount=amount,cost_id=c.id,start_time=datetime.now())
+    db.session.add(d)
+    db.session.commit()
+    return redirect(url_for('vendor_discounts', vendor_id=vendor_id))
+
+
 @app.route("/addFood/<int:vendor_id>")
 def addFood(vendor_id):
     return render_template("food.html", foods = Food.query.all(), vendor_id=vendor_id)
@@ -60,8 +93,13 @@ def addFoods():
 
     length = len(food_ids)
     for i in range(length):
-        c = Cost(food_id=food_ids[i], vendor_id=vendor_id, amount=float(costs[i]))
-        db.session.add(c)
+        c = Cost.query.filter_by(food_id=food_ids[i], vendor_id=vendor_id).first()
+        if c == None:
+            c = Cost(food_id=food_ids[i], vendor_id=vendor_id, amount=float(costs[i]))
+            db.session.add(c)
+        else:
+            c.amount = float(costs[i])
+        
     db.session.commit()
     return redirect('/vendors')
 

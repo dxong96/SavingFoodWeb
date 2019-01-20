@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Vendor Food</h1>
+<table class="table">
+	<thead>
+		<tr>
+			<th>Food</th>
+			<th>Cost</th>
+			<th>Discount (cents)</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for f in foods %}
+		{% set cost = food_id_cost[f.id] %}
+		<tr>
+			<td>{{f.name}}</td>
+			<td>${{cost.amount}}</td>
+			<td>
+				{% if cost.id in discount_dict %}
+					{{discount_dict[cost.id].amount}} cents,
+					{{discount_dict[cost.id].qty}} left
+				{% else %}
+					No discount
+				{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<h1>Add Discount</h1>
+<form action="/discounts" method="post">
+	<div class="form-group">
+		<label>Food</label>
+		<select name="food_id">
+			{% for f in foods %}
+            <option value="{{f.id}}">{{f.name}}</option>
+            {% endfor %}
+		</select>
+	</div>
+
+	<div class="form-group">
+		<label>Discount amount (cents)</label>
+		<input type="number" name="amount">
+	</div>
+
+	<div class="form-group">
+		<label>Discount quantity</label>
+		<input type="number" name="qty">
+	</div>
+	<input type="hidden" name="vendor_id" value="{{vendor_id}}">
+	<button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

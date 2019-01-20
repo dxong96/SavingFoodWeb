@@ -46,6 +46,7 @@ class Discount(BaseModel):
     start_time = db.Column(db.DateTime)
     amount = db.Column(db.Float)
     cost_id = db.Column(db.Integer, index=True)
+    qty = db.Column(db.Integer)
 
     def __repr__(self):
         return '<Discount {}>'.format(self.id) 

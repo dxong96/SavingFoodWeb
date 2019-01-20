@@ -1,28 +1,28 @@
 food_names = [
-	"Chicken Rice",
-	"Western",
-	"Wanton Mee",
-	"Laksa",
-	"Char Kway Theow",
-	"Nasi Bryani",
-	"Nasi Lemak",
-	"Minced Meat Noddle",
-	"Fishball Noodles",
-	"Dumpling Soup",
-	"Prata",
-	"Korean",
-	"Japanese",
-	"Mixed Vegetable Rice",
-	"Dessert",
-	"Thai Food",
-	"Mala Hotpot",
-	"Hot plate",
-	"Spaghetti",
-	"Vegetarian"
+    "Chicken Rice",
+    "Western",
+    "Wanton Mee",
+    "Laksa",
+    "Char Kway Theow",
+    "Nasi Bryani",
+    "Nasi Lemak",
+    "Minced Meat Noddle",
+    "Fishball Noodles",
+    "Dumpling Soup",
+    "Prata",
+    "Korean",
+    "Japanese",
+    "Mixed Vegetable Rice",
+    "Dessert",
+    "Thai Food",
+    "Mala Hotpot",
+    "Hot plate",
+    "Spaghetti",
+    "Vegetarian"
 ]
 for s in food_names:
-	f = Food(name=s)
-	db.session.add(f)
+    f = Food(name=s)
+    db.session.add(f)
 
 
 hc = HawkerCentre(address='88 Tanglin Halt Rd, Singapore 141088', name='Koufu', latitude=1.3020555, longitude=103.7893191)
