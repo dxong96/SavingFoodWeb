@@ -145,6 +145,8 @@ def centre_vendors(centre_id):
 def vendor(vendor_id):
     vendor = Vendor.query.get(vendor_id)
     ret = vendor.as_dict()
+    hawker = HawkerCentre.query.get(vendor.hawker_id)
+    ret["hawker_name"] = hawker.name
     if vendor != None:
         costs = Cost.query.filter_by(vendor_id=vendor_id).all()
         cost_ids = []
